@@ -19,6 +19,9 @@
     (4)Frame is in terms of superview's coordinate system;
        Bounds is in terms of local coordinate system;
     (5)bounds是修改自己坐标系的原点位置，进而影响到子view的显示位置。
+    (6)setBounds也可以修改view的大小，进而修改frame。
+    (7)setBounds可以修改子view的位置。setFrame可以主动修改自己在父view中的位置。
+    (8)更改bounds的大小，bounds的大小代表当前视图的长和宽，修改长宽后，中心点继续保持不变，长宽进行改变，通过bounds修改长宽就像是以中心点为基准点对长宽两边同时进行缩放。
  */
 @implementation MainViewController
 
@@ -82,6 +85,31 @@
     NSLog(@"view02_sub.frame = %@",NSStringFromCGRect(view02_sub.frame));
     NSLog(@"view02_sub.bounds = %@",NSStringFromCGRect(view02_sub.bounds));
 #endif
+
+
+    UIView *view02 = [[UIView alloc] initWithFrame:CGRectMake(100, 100, 100, 100)];
+    view02.backgroundColor = [UIColor colorWithWhite:0.851 alpha:1.000];
+    [self.view addSubview:view02];
+
+    UIView *view02_sub = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 60, 60)];
+    view02_sub.backgroundColor = [UIColor colorWithRed:1.000 green:0.908 blue:0.552 alpha:1.000];
+    [view02 addSubview:view02_sub];
+
+    [UIView animateWithDuration:1 animations:^{
+        [view02 setBounds:CGRectMake(-100, -100, 50, 50)];
+    } completion:^(BOOL finished) {
+        NSLog(@"view02.frame = %@",NSStringFromCGRect(view02.frame));
+        NSLog(@"view02.bounds = %@",NSStringFromCGRect(view02.bounds));
+        NSLog(@"view02_sub.frame = %@",NSStringFromCGRect(view02_sub.frame));
+        NSLog(@"view02_sub.bounds = %@",NSStringFromCGRect(view02_sub.bounds));
+    }];
+
+
+
+
+
+
+
 
 
 }

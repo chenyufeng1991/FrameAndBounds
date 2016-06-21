@@ -22,6 +22,13 @@
     (6)setBounds也可以修改view的大小，进而修改frame。
     (7)setBounds可以修改子view的位置。setFrame可以主动修改自己在父view中的位置。
     (8)更改bounds的大小，bounds的大小代表当前视图的长和宽，修改长宽后，中心点继续保持不变，长宽进行改变，通过bounds修改长宽就像是以中心点为基准点对长宽两边同时进行缩放。
+    (9)frame不管对于位置还是大小，改变的都是自己本身。
+    (10)frame的位置是以父视图的坐标系为参照，从而确定当前视图在父视图中的位置。
+    (11)frame的大小改变时，当前视图的左上角位置不会发生改变，只是大小发生改变。
+    ------
+    (12)bounds改变位置时，改变的是子视图的位置，自身没有影响。其实就是改变了本身的坐标系原点。，默认本身坐标系原点是左上角。
+    (13)bounds的大小改变时，当前视图的中心点不会发生改变，当前视图的大小发生改变，效果就像是缩放一样。
+    (14)更改bounds的位置对于当前视图没有影响，相当于更改了当前视图的坐标系，对于子视图来说当前视图的左上角已经不是(0,0)，而是改变后的坐标，坐标系改了，那么所有子视图的位置也会跟着改变。
  */
 @implementation MainViewController
 
@@ -86,7 +93,7 @@
     NSLog(@"view02_sub.bounds = %@",NSStringFromCGRect(view02_sub.bounds));
 #endif
 
-
+#if 0
     UIView *view02 = [[UIView alloc] initWithFrame:CGRectMake(100, 100, 100, 100)];
     view02.backgroundColor = [UIColor colorWithWhite:0.851 alpha:1.000];
     [self.view addSubview:view02];
@@ -103,6 +110,7 @@
         NSLog(@"view02_sub.frame = %@",NSStringFromCGRect(view02_sub.frame));
         NSLog(@"view02_sub.bounds = %@",NSStringFromCGRect(view02_sub.bounds));
     }];
+#endif
 
 
 

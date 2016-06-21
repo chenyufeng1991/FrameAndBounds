@@ -29,6 +29,10 @@
     (12)bounds改变位置时，改变的是子视图的位置，自身没有影响。其实就是改变了本身的坐标系原点。，默认本身坐标系原点是左上角。
     (13)bounds的大小改变时，当前视图的中心点不会发生改变，当前视图的大小发生改变，效果就像是缩放一样。
     (14)更改bounds的位置对于当前视图没有影响，相当于更改了当前视图的坐标系，对于子视图来说当前视图的左上角已经不是(0,0)，而是改变后的坐标，坐标系改了，那么所有子视图的位置也会跟着改变。
+    (15)center是根据父容器的相对位置来计算的。无论是修改父容器的bounds或者自身的bounds，都不会改变center。况且使用bounds来缩放View，都是根据center中心点来缩放的，所以center不会改变。
+    (16)使用frame改变view大小，center改变，因为缩放参考点为左上角。使用bounds改变view大小，center不变，因为缩放参考点为center。
+    (17)个人总结：想修改view的位置而不影响其他，修改自身frame的位置；想修改view的大小，修改frame的大小或者bounds的大小（考虑相对位置的改变）。
+                想修改viewA的所有子view的位置，修改viewA的bounds的位置（该父容器的坐标）。
  */
 @implementation MainViewController
 
@@ -36,8 +40,10 @@
 {
     [super viewDidLoad];
 
+#if 0
     NSLog(@"self.view.frame = %@",NSStringFromCGRect(self.view.frame));
     NSLog(@"self.view.bounds = %@",NSStringFromCGRect(self.view.bounds));
+#endif
 
 #if 0
     UIView *view01 = [[UIView alloc] initWithFrame:CGRectMake(0, 100, 50, 50)];
@@ -112,15 +118,84 @@
     }];
 #endif
 
+    //---------实例
+    UIView *viewFather = [[UIView alloc] initWithFrame:CGRectMake(50, 50, 200, 200)];
+    viewFather.backgroundColor = [UIColor colorWithWhite:0.741 alpha:1.000];
+    [self.view addSubview:viewFather];
 
+    UIView *viewSub = [[UIView alloc] initWithFrame:CGRectMake(20, 20, 50, 80)];
+    viewSub.backgroundColor = [UIColor colorWithRed:1.000 green:0.999 blue:0.721 alpha:1.000];
+    [viewFather addSubview:viewSub];
 
+#if 0
+    // (1)修改父视图的bounds的位置
+    [self printFrameAndBounds:viewFather viewOfSub:viewSub];
+    [UIView animateWithDuration:3 animations:^{
+        [viewFather setBounds:CGRectMake(30, 30, 200, 200)];
+    } completion:^(BOOL finished) {
+        [self printFrameAndBounds:viewFather viewOfSub:viewSub];
+    }];
+#endif
 
+#if 0
+    // (2)修改父视图的bounds的大小
+    [self printFrameAndBounds:viewFather viewOfSub:viewSub];
+    [UIView animateWithDuration:3 animations:^{
+        [viewFather setBounds:CGRectMake(0, 0, 250, 250)];
+    } completion:^(BOOL finished) {
+        [self printFrameAndBounds:viewFather viewOfSub:viewSub];
+    }];
+#endif
 
+#if 0
+    // (3)修改子视图的bounds的位置
+    [self printFrameAndBounds:viewFather viewOfSub:viewSub];
+    [UIView animateWithDuration:3 animations:^{
+        [viewSub setBounds:CGRectMake(50, 50, 50, 80)];
+    } completion:^(BOOL finished) {
+        [self printFrameAndBounds:viewFather viewOfSub:viewSub];
+    }];
+#endif
 
+#if 0
+    // (4)修改子视图的bounds的大小
+    [self printFrameAndBounds:viewFather viewOfSub:viewSub];
+    [UIView animateWithDuration:3 animations:^{
+        [viewSub setBounds:CGRectMake(0, 0, 80, 110)];
+    } completion:^(BOOL finished) {
+        [self printFrameAndBounds:viewFather viewOfSub:viewSub];
+    }];
+#endif
 
+#if 0
+    // (5)修改父视图的frame的位置。父容器的center改变,子视图的center不变。
+    [self printFrameAndBounds:viewFather viewOfSub:viewSub];
+    [UIView animateWithDuration:3 animations:^{
+        [viewFather setFrame:CGRectMake(20, 20, 200, 200)];
+    } completion:^(BOOL finished) {
+        [self printFrameAndBounds:viewFather viewOfSub:viewSub];
+    }];
+#endif
+
+#if 0
+    // (6)修改父视图的frame的大小。父容器的center改变，子视图的center不变。
+    [self printFrameAndBounds:viewFather viewOfSub:viewSub];
+    [UIView animateWithDuration:3 animations:^{
+        [viewFather setFrame:CGRectMake(50, 50, 250, 250)];
+    } completion:^(BOOL finished) {
+        [self printFrameAndBounds:viewFather viewOfSub:viewSub];
+    }];
+#endif
 
 
 }
 
+- (void)printFrameAndBounds:(UIView *)viewOfFather viewOfSub:(UIView *)viewOfSub
+{
+    NSLog(@"viewOfFather.frame = %@;viewOfFather.bounds = %@;viewOfFather.center = %@",NSStringFromCGRect(viewOfFather.frame),NSStringFromCGRect(viewOfFather.bounds),NSStringFromCGPoint(viewOfFather.center));
+    NSLog(@"viewOfSub.frame = %@;viewOfSub.bounds = %@;viewOfSub.center = %@",NSStringFromCGRect(viewOfSub.frame),NSStringFromCGRect(viewOfSub.bounds),NSStringFromCGPoint(viewOfSub.center));
+}
+
 
 @end
+
